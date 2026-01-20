@@ -20,15 +20,14 @@
         const map = L.map('map', {
             crs: L.CRS.Simple,
             minZoom: -3,
-            maxZoom: 2
         });
 
         const w = 2000, h = 2000;
         
         // Define the "Play Area" boundaries
-        const southWest = map.unproject([0, h], map.getMaxZoom());
-        const northEast = map.unproject([w, 0], map.getMaxZoom());
-        const bounds = new L.LatLngBounds(southWest, northEast);
+        map.fitBounds(bounds); // This zooms the camera to see the whole box
+        map.setMaxBounds(bounds); // This prevents scrolling away
+        map.options.minZoom = map.getBoundsZoom(bounds); // This locks the "zoom out" limit
 
         // Center the view on our virtual board
         map.fitBounds(bounds);
@@ -38,15 +37,15 @@
         // Draw a circle (e.g., a "Zone of Influence")
         L.circle([0, 0], {
             color: '#ffffff',
-            fill
+            fillOpacity: 0,
             radius: 1000 // This is in Leaflet units
-        }).addTo(map).bindPopup("The Whispering Woods");
+        }).addTo(map).bindPopup("The Fingerbog");
 
         // 4. LOAD PINS FROM locations.js
         poiData.forEach(function(poi) {
             L.marker(poi.coords)
                 .addTo(map)
-                .bindPopup(`<b>${poi.name}</b><br>${poi.description}`);
+                .bindPopup(`<b>${poi.name}</b><br>${poi.description}<br>${poi.type}`);
         });
 
         // Developer Tool: Click to get coordinates in Console (F12)
