@@ -12,17 +12,17 @@
 <body>
     <div id="map"></div>
 
-    <script src="locations.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="locations.js"></script>
 
     <script>
         // 2. SETUP MAP
         const map = L.map('map', {
             crs: L.CRS.Simple,
-            minZoom: -3,
         });
 
         const w = 2000, h = 2000;
+        const bounds = [[0, 0], [h, w]];
         
         // Define the "Play Area" boundaries
         map.fitBounds(bounds); // This zooms the camera to see the whole box
@@ -31,7 +31,6 @@
 
         // Center the view on our virtual board
         map.fitBounds(bounds);
-        map.setMaxBounds(bounds); // Prevents panning into the white void
 
         // 3. ADD SHAPES (Territories/Zones)
         // Draw a circle (e.g., a "Zone of Influence")
