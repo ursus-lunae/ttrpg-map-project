@@ -22,14 +22,16 @@
         });
 
         const w = 2000, h = 2000;
-        const bounds = [[0, 0], [h, w]];
+        const bounds = [
+            [-h / 2, -w / 2],
+            [ h / 2,  w / 2]
+            ];
         const initialZoom = map.getBoundsZoom(bounds);
 
         // Define the "Play Area" boundaries
         map.fitBounds(bounds);
         map.fitBounds(bounds, { padding: [50, 50] });
         map.setMaxBounds(bounds);
-        map.options.minZoom = initialZoom - 3;
 
         // Center the view on our virtual board
         map.fitBounds(bounds);
