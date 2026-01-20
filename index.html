@@ -36,19 +36,10 @@
 
         // 3. ADD SHAPES (Territories/Zones)
         // Draw a circle (e.g., a "Zone of Influence")
-        L.circle([-1000, 1000], {
-            color: '#4a5d23',
-            fillColor: '#6b8e23',
-            fillOpacity: 0.5,
-            radius: 200 // This is in Leaflet units
+        L.circle([0, 0], {
+            color: '#ffffff',
+            radius: 1000 // This is in Leaflet units
         }).addTo(map).bindPopup("The Whispering Woods");
-
-        // Draw a polygon (e.g., a Kingdom border)
-        L.polygon([
-            [-200, 200],
-            [-200, 600],
-            [-500, 400]
-        ], {color: 'darkred'}).addTo(map).bindPopup("The Crimson Realm");
 
         // 4. LOAD PINS FROM locations.js
         poiData.forEach(function(poi) {
