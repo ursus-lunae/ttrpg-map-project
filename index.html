@@ -4,6 +4,7 @@
     <title>Evergreen Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
+        /* This chosen background color acts as the "land" */
         #map { height: 100vh; width: 100vw; background-color: #a7b099; }
         body { margin: 0; }
     </style>
@@ -11,36 +12,54 @@
 <body>
     <div id="map"></div>
 
+    <script src="locations.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <script>
-        // 1. Setup the Map for a "Flat" image
+        // 2. SETUP MAP
         const map = L.map('map', {
             crs: L.CRS.Simple,
-            minZoom: -2
+            minZoom: -2,
+            maxZoom: 2
         });
 
-        // 2. Define your image dimensions (in pixels)
-        const w = 2000, h = 2000; 
-        const url = 'map-image.jpg'; // Replace with your file name
-
-        // 3. Set the map boundaries
+        const w = 2000, h = 2000;
+        
+        // Define the "Play Area" boundaries
         const southWest = map.unproject([0, h], map.getMaxZoom());
         const northEast = map.unproject([w, 0], map.getMaxZoom());
         const bounds = new L.LatLngBounds(southWest, northEast);
 
-        // 4. Add the image to the map
-        L.imageOverlay(url, bounds).addTo(map);
-        map.setMaxBounds(bounds);
-        map.setView([0, 0], -1);
+        // Center the view on our virtual board
+        map.fitBounds(bounds);
+        map.setMaxBounds(bounds); // Prevents panning into the white void
 
-        // 5. Example Pin
-        // Note: Coordinates in CRS.Simple are [y, x]
-        const tavern = L.marker([-500, 800]).addTo(map);
-        tavern.bindPopup("<b>The Rusty Dragon</b><br>The best ale in the region.");
-        
-        // Helper to find coordinates (Click map to see coords in console)
+        // 3. ADD SHAPES (Territories/Zones)
+        // Draw a circle (e.g., a "Zone of Influence")
+        L.circle([-1000, 1000], {
+            color: '#4a5d23',
+            fillColor: '#6b8e23',
+            fillOpacity: 0.5,
+            radius: 200 // This is in Leaflet units
+        }).addTo(map).bindPopup("The Whispering Woods");
+
+        // Draw a polygon (e.g., a Kingdom border)
+        L.polygon([
+            [-200, 200],
+            [-200, 600],
+            [-500, 400]
+        ], {color: 'darkred'}).addTo(map).bindPopup("The Crimson Realm");
+
+        // 4. LOAD PINS FROM locations.js
+        poiData.forEach(function(poi) {
+            L.marker(poi.coords)
+                .addTo(map)
+                .bindPopup(`<b>${poi.name}</b><br>${poi.description}`);
+        });
+
+        // Developer Tool: Click to get coordinates in Console (F12)
         map.on('click', function(e) {
-            console.log("Clicked at: " + e.latlng);
+            console.log("Add this to locations.js: [" + e.latlng.lat + ", " + e.latlng.lng + "]");
         });
     </script>
 </body>
