@@ -28,12 +28,8 @@
             ];
 
         // Define the "Play Area" boundaries
-        map.fitBounds(bounds);
         map.fitBounds(bounds, { padding: [50, 50] });
         map.setMaxBounds(bounds);
-
-        // Center the view on our virtual board
-        map.fitBounds(bounds);
 
         // 3. ADD SHAPES (Territories/Zones)
         // Draw a circle (e.g., a "Zone of Influence")
