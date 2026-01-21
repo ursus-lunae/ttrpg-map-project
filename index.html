@@ -1,21 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>Evergreen Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         /* This chosen background color acts as the "land" */
         #map { height: 100vh; width: 100vw; background-color: #a7b099; }
         body { margin: 0; }
+        .leaflet-tooltip.poi-tooltip {
+            background: none;
+            border: none;
+            box-shadow: none;
+            padding: 0;
+            margin: 0;
+            color: white;
+            font-family: 'Vollkorn', serif;
+            font-size: 13px;
+            font-weight: normal;
+        }
+        .leaflet-tooltip.poi-tooltip:before {
+            display: none;
+        }
+
+        .poi-description {
+            text-align: justify;
+            text-justify: inter-word;
+            margin-top: 0.8em;
+            line-height: 1.5;
+        }   
     </style>
 </head>
 <body>
     <div id="map"></div>
-    <script src="locations.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
+    <script src="locations.js"></script>
     <script>
-        // 2. SETUP MAP
+        
+// 2. SETUP MAP
+
         const map = L.map('map', {
             crs: L.CRS.Simple,
             minZoom: -3,
@@ -23,45 +46,129 @@
         });
 
         const w = 2600, h = 2600;
-        const bounds = [
+        const playBounds = [
             [-h / 2, -w / 2],
             [ h / 2,  w / 2]
             ];
 
-        // Define the "Play Area" boundaries
-        map.fitBounds(bounds, { padding: [50, 50] });
-        map.setMaxBounds(bounds);
+        const panMargin = 3000; // tweak this
 
+        const cameraBounds = [
+            [playBounds[0][0] - panMargin, playBounds[0][1] - panMargin],
+            [playBounds[1][0] + panMargin, playBounds[1][1] + panMargin]
+        ];
 
-        // fingerbog svg overlay 
+// Define the "Play Area" boundaries
+
+        map.fitBounds(playBounds, { padding: [50, 50] });
+        map.setMaxBounds(cameraBounds);
+
+// fingerbog svg overlay 
         const fingerbogBounds = [
-                [-5000, -2500],
-                [ 1500,  5500]
+                [-1900, -1900],
+                [ 1900,  1900]
             ];
 
-        L.imageOverlay('fingerbog.svg', fingerbogBounds, { interactive: true }).addTo(map);
+        L.imageOverlay('fingerbog-1.svg', fingerbogBounds, { interactive: true }).addTo(map);
 
+// nubelwod svg overlay 
+
+        const nubelwodBounds = [
+                [-2800, -2800],
+                [ 2800,  2800]
+            ];
+
+        L.imageOverlay('nubelwod.svg', nubelwodBounds, { interactive: true }).addTo(map);
         
-        // 4. LOAD PINS FROM locations.js
+// mountain range png overlay
+        const mountainrangeBounds = [
+                [1850, -1110],
+                [1500, 1400]
+            ];        
+        L.imageOverlay('mountain-range.png', mountainrangeBounds, { interactive: true }).addTo(map);
+
+        const mountainrange2Bounds = [
+                [1550, -1120],
+                [1250, 1380]
+            ];        
+        L.imageOverlay('mountain-range.png', mountainrange2Bounds, { interactive: true }).addTo(map);
+
+// Compass overlay - Add compass to top-left corner
+        const compassControl = L.Control.extend({
+            options: {
+                position: 'topright' // 'topleft', 'topright', 'bottomleft', 'bottomright'
+            },
+            onAdd: function(map) {
+                const container = L.DomUtil.create('div', 'leaflet-control');
+                container.style.padding = '5px';
+                container.style.boxShadow = '0 0 0px rgba(0,0,0,0)';
+                const img = L.DomUtil.create('img', '', container);
+                img.src = 'compass.png';
+                img.style.width = '150px';
+                img.style.height = '150px';
+                
+                return container;
+            }
+        });
+
+map.addControl(new compassControl());
+
+// 4. LOAD PINS FROM locations.js
+
+        var pin = L.icon({
+            iconUrl: 'pin.png',
+            iconSize: [38, 38],
+            iconAnchor: [19, 38],
+            popupAnchor: [0, -72], 
+            });
+
+        const menhirPin = L.icon({
+        iconUrl: 'menhir.png',
+        iconSize: [20, 40],
+        iconAnchor: [10, 35],
+        popupAnchor: [0, -72], 
+
+            });
+        
+        const sunstonePin = L.icon({
+        iconUrl: 'sunstone.png',
+        iconSize: [20, 40],
+        iconAnchor: [10, 35],
+        popupAnchor: [0, -72], 
+            });
 
         poiData.forEach(function(poi) {
 
-        var pin = L.divIcon({
-                    html: `<div style="text-align:center; width:max-content;">
-                            <img src="pin.png" style="width:30px;height:30px;"><br>
-                            <span style="font-family: 'Vollkorn';color:white;font-size:12px;">${poi.name}</span>
-                        </div>`,
-                    className: '', // remove default Leaflet styles
-                    iconSize: [38, 80],
-                    iconAnchor: [19, 40]
-                });
+            let iconToUse = pin;
 
-            L.marker(poi.coords, {icon: pin})
-                .addTo(map)
-                .bindPopup(`<b>${poi.name}</b><br>${poi.description}<br>${poi.type}`);
+    if (poi.name === "Finger Monolith" || poi.name === "Haven" || poi.name === "Sun Temple Ruins") {
+        iconToUse = menhirPin;
+    }
+
+    if (poi.name === "Solstice") {
+        iconToUse = sunstonePin;
+    }
+
+    L.marker(poi.coords, { icon: iconToUse })
+        .addTo(map)
+        .bindPopup(
+            `<h3>${poi.name}<hr></h3>
+            <b>Type:</b> <i>${Array.isArray(poi.type) ? poi.type.join(", ") : poi.type}</i><br>
+            <div class="poi-description">
+                ${poi.description}
+            </div>`
+        )
+        .bindTooltip(poi.name, {
+            permanent: true,
+            direction: 'top',
+            offset: [0, -40],
+            className: 'poi-tooltip'
         });
 
-        // Developer Tool: Click to get coordinates in Console (F12)
+        });
+
+// Developer Tool: Click to get coordinates in Console (F12)
+
         map.on('click', function(e) {
             console.log("Add this to locations.js: [" + e.latlng.lat + ", " + e.latlng.lng + "]");
         });
