@@ -34,7 +34,7 @@ const poiData = [
         name: "Ilzandaira",
         coords: [-1000, 250],
         description: "A willow creature named Ilzandaira lives in the swamp, a couple of days' travel from Haven. <b>Trickledowns</b>—flowers that can be used for medicine—grow in her grove, and she is willing to share in return for our company. She apparently finds us entertaining…",
-        type: "POI"
+        type: "Person of Interest"
     },
     {
         name: "Finger Monolith",
