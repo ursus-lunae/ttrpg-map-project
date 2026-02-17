@@ -190,6 +190,22 @@ document.getElementById('gridToggle').onchange = e => {
         popupAnchor: [0, -70], 
 
             });
+
+        const mellorinPin = L.icon({
+        iconUrl: 'mellorin.png',
+        iconSize: [50, 52],
+        iconAnchor: [25, 35],
+        popupAnchor: [0, -70], 
+
+            });
+        
+        const willowPin = L.icon({
+        iconUrl: 'willow.png',
+        iconSize: [50, 52],
+        iconAnchor: [25, 35],
+        popupAnchor: [0, -70], 
+
+            });
         
         const sunstonePin = L.icon({
         iconUrl: 'sunstone.png',
@@ -208,6 +224,14 @@ document.getElementById('gridToggle').onchange = e => {
 
     if (poi.name === "Solstice") {
         iconToUse = sunstonePin;
+    }
+
+    if (poi.name === "Mellorin Hive Island") {
+        iconToUse = mellorinPin;
+    }
+
+    if (poi.name === "Ilzandaira") {
+        iconToUse = willowPin;
     }
 
     L.marker(poi.coords, { icon: iconToUse })

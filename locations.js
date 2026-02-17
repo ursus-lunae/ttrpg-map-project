@@ -32,7 +32,7 @@ const poiData = [
     },
     {
         name: "Ilzandaira",
-        coords: [-1000, 250],
+        coords: [-800, 250],
         description: "A willow creature named Ilzandaira lives in the swamp, a couple of days' travel from Haven. <b>Trickledowns</b>—flowers that can be used for medicine—grow in her grove, and she is willing to share in return for our company. She apparently finds us entertaining…",
         type: "Person of Interest"
     },
@@ -53,5 +53,12 @@ const poiData = [
         coords: [100, -400],
         description: "A settlement of blind inhabitants built high above the swamp on wooden stilts. Mostly unlit and guided by sound, touch, and bioluminescent growths, the village embodies adaptation rather than defiance of the Fingerbog.",
         type: "Settlement"
+    },
+
+    {
+        name: "Mellorin Hive Island",
+        coords: [500, 400],
+        description: "An island with woodwoven trees, inside of which are dozens of mellorin hives of various sizes.",
+        type: "Point of Interest"
     }
 ];
